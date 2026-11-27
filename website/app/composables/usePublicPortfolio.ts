@@ -13,15 +13,18 @@ interface PublishedWork {
   published: boolean;
 }
 
-/** A configured portfolio never falls back to unpublished demonstration work. */
+/** Keep the exhibition visible while the demonstration portfolio is in use. */
 export function usePublicPortfolio() {
   const config = useRuntimeConfig();
   const apiBase = String(config.public.apiBaseUrl || "").replace(/\/+$/, "");
+  const demoMode = config.public.demoMode !== false && String(config.public.demoMode) !== "false";
   const works = useState<Study[]>("public-portfolio", () =>
     apiBase ? [] : [...previewStudies],
   );
   const loading = useState("public-portfolio-loading", () => false);
   const error = useState("public-portfolio-error", () => "");
+  const usingDemo = computed(() => !apiBase || (demoMode && !works.value.length));
+  const studies = computed(() => usingDemo.value ? previewStudies : works.value);
 
   async function load() {
     if (!apiBase || loading.value) return;
@@ -53,7 +56,7 @@ export function usePublicPortfolio() {
   }
 
   onMounted(load);
-  return { studies: works, loading, error, load };
+  return { studies, usingDemo, loading, error, load };
 }
 
 /** Image sources are public uploads or the existing local image presets. */

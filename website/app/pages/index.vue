@@ -2,6 +2,7 @@
 import { getArtwork } from "~/data/artworks";
 const {
   studies,
+  usingDemo,
   loading: portfolioLoading,
   error: portfolioError,
   load: reloadPortfolio,
@@ -15,7 +16,7 @@ const selectedStudies = computed(() => {
   const remaining = studies.value.filter(
     (work) => work.id !== heroStudy.value?.id,
   );
-  if (config.public.apiBaseUrl) return remaining;
+  if (!usingDemo.value) return remaining;
   const opening = getArtwork("the-shape-of-silence");
   return opening ? [opening, ...remaining] : remaining;
 });
