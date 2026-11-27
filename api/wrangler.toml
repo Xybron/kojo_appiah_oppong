@@ -1,0 +1,17 @@
+name = "kojo-api"
+main = "src/index.ts"
+compatibility_date = "2026-11-27"
+
+# Production bindings. Set the website origin before deploying.
+# Supabase credentials belong in Worker secrets, not this file.
+[vars]
+ALLOWED_ORIGINS = ""
+AUTH_ALLOW_REGISTRATION = "false"
+
+# npm run dev selects this environment and reads .dev.vars.local.
+[env.local]
+name = "kojo-api-local"
+
+[env.local.vars]
+ALLOWED_ORIGINS = "http://127.0.0.1:3000,http://localhost:3000"
+AUTH_ALLOW_REGISTRATION = "false"

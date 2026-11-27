@@ -1,0 +1,46 @@
+{
+  "method": "OpenAI built-in image_gen",
+  "purpose": "User-authorized fictional demonstration imagery, to be replaced with Kojo's original artwork.",
+  "assets": [
+    {
+      "key": "hero",
+      "prompt": "Use case: photorealistic-natural. Asset type: hero photograph for an art-directed African photographer's portfolio, clearly demo imagery. Create an original extraordinary fashion and fine-art photographic portrait, landscape 3:2 frame. A fictional adult Black woman with dark rich skin in sculptural vermilion-red fabric, eyes softly closed, in profile turned slightly left, one hand gently resting against her neck. Deep saturated red silk folds frame her shoulders like an abstract sculpture. Background is warm near-black charcoal, soft directional sidelight on cheek and silk. Museum-quality editorial photography, analog medium-format texture, natural skin pores, restrained grain, deep blacks, crisp subject. Subject centered slightly right, room on left for breathing space, head fully within frame, graceful composition that can also crop to portrait. No type, no text, no logos, no borders, no watermarks, no collage. The subject is fictional, not an image of the artist. Output a single finished photograph."
+    },
+    {
+      "key": "architecture",
+      "prompt": "Use case: photorealistic-natural. Asset type: architectural photography demo for a fine-art portfolio. Create an original meticulous architectural photograph, portrait 4:5 composition. A sculptural modernist pale concrete staircase with a beautifully curved solid balustrade and a large circular opening in the wall, photographed in sharp late afternoon sun. Bold geometry and angular shadow crossing the pale silver-grey surfaces. Rich charcoal shadows, almost monochrome warm neutral light, generous negative space, subtle concrete texture, no people, no plants, no objects, no lettering or signs. Art-gallery print quality, straight considered lines, medium-format editorial architecture photography, believable built space, quiet and minimal. No watermark, no borders. Single photograph."
+    },
+    {
+      "key": "still-life",
+      "prompt": "Use case: ads-marketing. Asset type: photographic still-life demo for an artist and commercial photographer portfolio. Create an original highly art-directed photographic still life in square 1:1 composition. One translucent deep cobalt blue glass sphere resting on a small matte ivory stone plinth, with a thin folded sheet of brushed silver metal curving behind it. Hard side lighting, elegant caustics, long dramatic blue shadow, mineral and glass material richness. Background clean pale grey, restrained avant-garde luxury editorial image, impeccably composed asymmetry and negative space. Clearly photographic, not an illustration. No branding, no text, no logo, no watermark, no border, no collage."
+    },
+    {
+      "key": "exhibition",
+      "prompt": "Use case: photorealistic-natural. Asset type: original demo exhibition installation photograph for a photographer's portfolio. Create a wide landscape 16:9 fine-art photograph of a quiet contemporary gallery interior with pristine off-white walls and a dark concrete floor. Three large framed photographic abstract studies of warm burnt-orange mineral landscapes are hanging on the far wall, original abstract images without recognizable borrowed artwork. Gentle natural daylight comes from a tall side window at left and casts a sharply angled pool of sun across floor. At far right a small dark timber bench. No people, no signage, no readable text, no logos, no watermarks. Atmospheric photographic realism, tactile print surfaces, thoughtful negative space, medium-format perspective. A calm real physical exhibition space, not a rendered webpage."
+    },
+    {
+      "key": "fine-art",
+      "prompt": "Use case: photorealistic-natural. Asset type: fine-art photograph for a demo artist portfolio. Original landscape 3:2 photograph of sculptural windswept sand dunes, taken very close with no sky or horizon, so their intersecting ridges become an abstract study of lines and texture. A single fine sinuous ridge runs diagonally from lower left toward upper right. Rich oxidized orange and rust earth tones with one deep plum-black shadow, low raking sunlight illuminates tiny sand ripples. Extremely refined spare composition, analogue medium-format photograph, tactile grain, realistic natural forms. No people, plants, buildings, text, branding, borders or watermark. Make a memorable gallery-quality abstract landscape, not a wallpaper pattern."
+    },
+    {
+      "key": "paper",
+      "prompt": "Create one original cinematic editorial photograph for an artist portfolio, landscape 3:2. An intimate close-up of a large unframed fine-art photographic print on thick off-white textured cotton paper lying on a deeply weathered dark wooden worktable. The print depicts abstract burnt-orange sand ridges and deep plum shadows, no sky. Its paper edge gently curls at the near corner catching warm late afternoon raking sunlight from the left, revealing grain and tangible material. A strip of rich red fabric softly out of focus at the far edge of the frame connects photography to tactile material. A quiet, spare and imperfect artist workspace, no branded tools, no faces, no people, no text, no letters, no logos, no watermark. Photograph from a low oblique angle, print occupies 60 percent of frame, pronounced shallow focus, warm near-black deep shadows, exquisite paper detail. Analog medium-format photography, realistic photographic surfaces, sophisticated museum editorial aesthetic. No illustration or webpage. This is a fictional still life, not documentation of a specific artist or event."
+    },
+    {
+      "key": "tide",
+      "prompt": "Use case: photorealistic-natural. Create one original fine-art photograph, landscape 3:2, an empty hand-carved wooden fishing canoe on a quiet Atlantic shoreline at dawn, seen from a slightly elevated perspective, long pale silver-blue surf line and warm taupe wet sand, boat in lower third, delicate fog, generous negative space above and tender diffused natural light. Restrained analog medium-format photography, believable wood texture, timeless coastal stillness. No people, no writing, no logos, no watermark, no borders. This image is the artwork itself, not a picture in a frame. Output 1536 by 1024."
+    },
+    {
+      "key": "terra",
+      "prompt": "Create one original physical mixed-media artwork photographed perfectly straight-on so it fills the entire portrait 4:5 frame. Abstract minimalist composition on rough warm ivory cotton canvas: one broad asymmetric terracotta pigment arc intersects a charcoal-black softly irregular vertical form, with a narrow clay-red line, visible plaster relief and mineral pigment brush traces, controlled tactile handmade imperfections, striking balance between negative space and sculptural solid forms. Palette ivory, oxidized red, burnt sienna, near-black. Highly sophisticated original contemporary abstraction, not in the recognizable style of a named artist. Flat even gallery lighting preserves material, no perspective, no surrounding wall, no frame, no text or signature or watermark. The image is the whole finished artwork, edge to edge."
+    },
+    {
+      "key": "blue-hour",
+      "prompt": "Use case: photorealistic-natural. Original fine-art architectural photograph, vertical 3:4. A sculptural deep cobalt blue courtyard wall, tall narrow rectangular opening reveals warm cream sky, one curved stair rising gently from lower left, hard late afternoon sun creates one long dark geometric shadow, matte ultramarine limewash texture, rich but restrained palette, extraordinary precise photographic composition. No people, no plants, no furniture, no signage, no letters, no watermark. Medium-format photography, believable built space, strong quiet graphic geometry, image itself is finished artwork no frame."
+    },
+    {
+      "key": "silence",
+      "prompt": "Use case: photorealistic-natural. Original fine-art fashion editorial photograph, portrait 3:4. Fictional adult Black woman with short natural hair photographed from behind with face gently turned just enough to see her cheek profile, wearing a sculptural ivory pleated cloth garment that fans across her shoulders, earthy deep olive studio background, warm sidelight delicately traces skin and folds, strong calm silhouette, eyes unseen, quiet dignity and tactile fabric. Visually sophisticated composition with space above, analog medium-format realism, fine grain, natural proportions. Not a portrait of any real artist. No text, branding, watermark, frame, or collage. Output one finished photograph."
+    }
+  ]
+}

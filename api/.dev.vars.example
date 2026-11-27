@@ -1,0 +1,13 @@
+# Copy this file to .dev.vars.local; npm run dev loads that exact file.
+# Use the Supabase project for this website.
+# Project Settings > API: Project URL and publishable key (sb_publishable_...).
+# A legacy anon key also works. Do not use a secret/service_role key here.
+SUPABASE_URL=""
+SUPABASE_PUBLISHABLE_KEY=""
+
+# Exact website origins, separated by commas; no paths or trailing slashes.
+ALLOWED_ORIGINS="http://127.0.0.1:3000,http://localhost:3000"
+
+# Keep false for an admin-only foundation. Create the first admin in Supabase.
+# Set true only when public visitor registration is needed.
+AUTH_ALLOW_REGISTRATION="false"
