@@ -2,7 +2,7 @@
 import "~/assets/css/login.css";
 const auth = useStudioAuth();
 const router = useRouter();
-const mode = ref<"password" | "email" | "code">("password");
+const mode = ref<"password" | "email" | "code">("email");
 const email = ref("");
 const password = ref("");
 const code = ref("");
