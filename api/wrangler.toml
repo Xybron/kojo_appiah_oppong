@@ -5,7 +5,7 @@ compatibility_date = "2026-11-27"
 # Production bindings. Set the website origin before deploying.
 # Supabase credentials belong in Worker secrets, not this file.
 [vars]
-ALLOWED_ORIGINS = ""
+ALLOWED_ORIGINS = "https://kojo-appiah-oppong.pages.dev"
 AUTH_ALLOW_REGISTRATION = "false"
 
 # npm run dev selects this environment and reads .dev.vars.local.
