@@ -162,11 +162,45 @@ describe('auth boundary', () => {
     expect(response.status).toBe(401);
   });
 
-  it('allows administrator access only through server-controlled app metadata', async () => {
+  it('allows administrator access only to the verified platform owner', async () => {
     fetchMock.mockResolvedValueOnce(jsonResponse({ ...user, user_metadata: { role: 'admin' } }));
     expect((await request('/admin', undefined, {}, 'visitor-token', 'GET')).status).toBe(403);
     fetchMock.mockResolvedValueOnce(jsonResponse({ ...user, app_metadata: { role: 'admin' } }));
+    expect((await request('/admin', undefined, {}, 'other-admin-token', 'GET')).status).toBe(403);
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({
+        ...user,
+        email: 'ronaldnettey360@gmail.com',
+        email_confirmed_at: '2026-11-27T00:00:00Z',
+      }),
+    );
     expect((await request('/admin', undefined, {}, 'admin-token', 'GET')).status).toBe(200);
+  });
+
+  it('denies unverified, anonymous, and metadata-spoofed owner identities', async () => {
+    for (const candidate of [
+      { ...user, email: 'ronaldnettey360@gmail.com' },
+      {
+        ...user,
+        email: 'ronaldnettey360@gmail.com',
+        email_confirmed_at: '2026-11-27T00:00:00Z',
+        is_anonymous: true,
+      },
+      { ...user, user_metadata: { email: 'ronaldnettey360@gmail.com', role: 'admin' } },
+    ]) {
+      fetchMock.mockResolvedValueOnce(jsonResponse(candidate));
+      expect((await request('/admin', undefined, {}, 'visitor-token', 'GET')).status).toBe(403);
+    }
+  });
+
+  it('normalizes the verified owner email', () => {
+    expect(
+      mapAuthUser({
+        ...user,
+        email: 'RonaldNettey360@GMAIL.COM',
+        email_confirmed_at: '2026-11-27T00:00:00Z',
+      }).role,
+    ).toBe('admin');
   });
 
   it('sends profile changes with the user JWT and only allowed profile attributes', async () => {

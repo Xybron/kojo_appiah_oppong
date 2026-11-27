@@ -36,7 +36,7 @@ In `../website`, copy `.env.example` to `.env`. The API origin is already set to
 2. Keep email confirmation enabled. Registration uses normal Supabase signup and never automatically confirms an address.
 3. For email codes, set the **Magic Link** and **Confirm signup** email templates to include `{{ .Token }}`. The API verifies these codes with `/verify-otp`. The website supports code sign-in and password sign-in; email codes avoid requiring a link callback. Configure custom SMTP in Supabase before sending real production emails; its default mail service is limited.
 4. Set the project's Site URL and allowed redirect URLs to the website. Keep Supabase's own **Allow new users to sign up** setting disabled for an admin-only site. The Worker's registration flag only controls this API; Supabase's public Auth endpoint has its own setting.
-5. Create the first account through Supabase's trusted admin tools. Set its server-controlled `app_metadata.role` to `admin`. All other accounts map to `visitor`; user-editable metadata never grants permissions.
+5. The verified Auth email `ronaldnettey360@gmail.com` is the sole Kojo platform owner. Apply the `platform_owner_access` migration alongside the API policy. All other accounts map to `visitor`, including accounts with unrelated admin metadata in this shared Supabase project. User-editable metadata never grants permissions.
 
 For example, after creating the account, run this in that project's Supabase SQL editor with its actual user ID:
 

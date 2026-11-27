@@ -522,12 +522,7 @@ onMounted(() => {
       >
         <WorkspaceIcon name="close" />
       </button>
-      <NuxtLink to="/" class="ws-brand" aria-label="Kojo Appiah Oppong home"
-        ><span class="ws-brand-mark">ko.</span
-        ><span
-          >KOJO APPIAH OPPONG<small>Photography & fine art</small></span
-        ></NuxtLink
-      >
+      <SiteWordmark class="ws-brand" />
       <div class="ws-sidebar-label">
         {{ isAdmin ? "STUDIO WORKSPACE" : "YOUR WORKSPACE" }}
       </div>
@@ -569,7 +564,7 @@ onMounted(() => {
             class="ws-account-name"
             >{{ user?.firstName || "Your account"
             }}<small>{{
-              isAdmin ? "Studio administrator" : "Client account"
+              isAdmin ? "Platform owner" : "Customer account"
             }}</small></span
           ><WorkspaceIcon name="settings" />
         </button>
@@ -594,7 +589,7 @@ onMounted(() => {
           <WorkspaceIcon name="menu" />
         </button>
         <p class="ws-breadcrumb">
-          <span>{{ isAdmin ? "Studio" : "Client portal" }}</span><span
+          <span>{{ isAdmin ? "Owner studio" : "Customer portal" }}</span><span
             aria-hidden="true"
             >/</span
           >{{ sectionTitle }}
@@ -628,7 +623,7 @@ onMounted(() => {
         <div class="ws-page-heading">
           <div>
             <p class="ws-kicker">
-              {{ isAdmin ? "STUDIO DASHBOARD" : "CLIENT PORTAL" }}
+              {{ isAdmin ? "OWNER STUDIO" : "CUSTOMER PORTAL" }}
             </p>
             <h1>
               {{
@@ -870,7 +865,7 @@ onMounted(() => {
             </section>
           </div>
           <div class="ws-bottom-note">
-            <span class="ws-brand-mark">ko.</span>
+            <SiteWordmark class="ws-footer-brand" />
             <p>
               A considered approach. From first conversation to final frame.
             </p>

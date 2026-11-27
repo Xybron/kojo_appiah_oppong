@@ -47,7 +47,7 @@ For local API development, fill in `../api/.dev.vars.local`, run `npm run dev` i
 One website has three account routes:
 
 - `/login`: password or email-code sign-in. Existing accounts only while registration is disabled.
-- `/studio`: the Studio Dashboard for accounts with server-managed `app_metadata.role = admin`.
+- `/studio`: the Studio Dashboard for the verified platform owner `ronaldnettey360@gmail.com`.
 - `/portal`: the Client Portal for other accounts (the API retains the existing `visitor` role name).
 
 Both areas provide an overview, enquiry tracking, projects, shared files, and profile/password settings. Admins also manage clients, update project stages and next steps, write private enquiry notes, upload files, and create/edit/order/publish portfolio work. Clients cannot edit projects or see other clients' data. A client record links to its separately provisioned Auth account by its verified email; creating the record does not send an invitation or create an Auth account.

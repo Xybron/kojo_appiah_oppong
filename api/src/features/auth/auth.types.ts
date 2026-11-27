@@ -102,6 +102,16 @@ export type AuthUser = {
 
 const text = (value: unknown): string => (typeof value === 'string' ? value : '');
 
+// This policy is mirrored by studio_private.is_admin() for database and storage RLS.
+// Only the verified Auth identity is trusted, never an email from profile metadata.
+export function isPlatformOwner(user: User): boolean {
+  return (
+    user.email?.trim().toLowerCase() === 'ronaldnettey360@gmail.com' &&
+    Boolean(user.email_confirmed_at) &&
+    !user.is_anonymous
+  );
+}
+
 export function mapAuthUser(user: User): AuthUser {
   const metadata = user.user_metadata ?? {};
   return {
@@ -113,7 +123,7 @@ export function mapAuthUser(user: User): AuthUser {
       typeof metadata.last_name === 'string' ? metadata.last_name : text(metadata.family_name),
     avatarUrl: text(metadata.avatar_url) || text(metadata.picture) || null,
     // user_metadata is editable by the account owner and never grants access.
-    role: user.app_metadata?.role === 'admin' ? 'admin' : 'visitor',
+    role: isPlatformOwner(user) ? 'admin' : 'visitor',
   };
 }
 

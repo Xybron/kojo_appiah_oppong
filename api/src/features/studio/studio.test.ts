@@ -13,7 +13,8 @@ const env: Bindings = {
 };
 const admin = {
   id: '00000000-0000-4000-8000-000000000001',
-  email: 'admin@example.test',
+  email: 'ronaldnettey360@gmail.com',
+  email_confirmed_at: '2026-11-27T00:00:00Z',
   aud: 'authenticated',
   role: 'authenticated',
   created_at: '2026-11-27T00:00:00Z',

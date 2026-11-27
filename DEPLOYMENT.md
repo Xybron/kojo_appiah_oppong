@@ -34,7 +34,7 @@ With the owner's approval, Kojo shares the existing **LAB** project (`xfppsgioth
 
 All six `studio_*` tables have row-level security enabled. The `studio-project-files` bucket is private; `studio-portfolio` is public. Existing Lumen tables and Auth settings were retained.
 
-Supabase dashboard accounts and project Auth users are separate. The owner must provision a project Auth user before signing into Kojo. Studio administration requires the trusted `app_metadata.role` value `admin`; user-editable metadata cannot grant it.
+Supabase dashboard accounts and project Auth users are separate. The owner must provision a project Auth user before signing into Kojo. Kojo studio administration is restricted to the verified Auth email `ronaldnettey360@gmail.com`. The API and `studio_private.is_admin()` both enforce this policy. Other emails receive the customer portal, regardless of profile or app metadata.
 
 ## Verified on 2026-11-27
 
@@ -44,4 +44,4 @@ Supabase dashboard accounts and project Auth users are separate. The owner must 
 - The production login form reaches the Worker and rejects invalid credentials.
 - The committed API passed 52 tests and TypeScript checking.
 
-The first administrator account and a successful signed-in studio check are still pending.
+The verified owner account exists. The `platform_owner_access` migration was applied on 2026-11-27; the owner predicate accepts that account and rejects forged owner claims.
