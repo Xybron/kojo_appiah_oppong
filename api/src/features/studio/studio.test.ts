@@ -121,6 +121,50 @@ describe('studio authorization and data boundaries', () => {
     });
     expect(new Headers(init.headers).get('Authorization')).toBe('Bearer caller-token');
   });
+  it.each(['image/jpeg', 'image/png', 'image/webp'])(
+    'signs an authorized %s preview without an attachment disposition',
+    async (mime_type) => {
+      upstream.mockResolvedValueOnce(json(visitor));
+      upstream.mockResolvedValueOnce(
+        json({ name: 'Photo', storage_path: 'project/photo', mime_type }),
+      );
+      upstream.mockResolvedValueOnce(
+        json({ signedURL: '/object/sign/studio-project-files/project/photo?token=short' }),
+      );
+      const response = await request(
+        '/workspace/files/00000000-0000-4000-8000-000000000002/download?preview=true',
+      );
+      expect(response.status).toBe(200);
+      expect(JSON.parse(upstream.mock.calls[2][1].body).expiresIn).toBe(60);
+      expect(((await response.json()) as { url: string }).url).not.toContain('download=');
+    },
+  );
+  it.each(['application/pdf', 'application/zip', 'image/svg+xml'])(
+    'refuses inline previews for %s',
+    async (mime_type) => {
+      upstream.mockResolvedValueOnce(json(visitor));
+      upstream.mockResolvedValueOnce(
+        json({ name: 'File', storage_path: 'project/file', mime_type }),
+      );
+      expect(
+        (
+          await request(
+            '/workspace/files/00000000-0000-4000-8000-000000000002/download?preview=true',
+          )
+        ).status,
+      ).toBe(400);
+      expect(upstream).toHaveBeenCalledTimes(2);
+    },
+  );
+  it('does not sign previews hidden by RLS', async () => {
+    upstream.mockResolvedValueOnce(json(visitor));
+    upstream.mockResolvedValueOnce(json(null));
+    expect(
+      (await request('/workspace/files/00000000-0000-4000-8000-000000000002/download?preview=true'))
+        .status,
+    ).toBe(404);
+    expect(upstream).toHaveBeenCalledTimes(2);
+  });
   it('signs authorized downloads for sixty seconds', async () => {
     upstream.mockResolvedValueOnce(json(visitor));
     upstream.mockResolvedValueOnce(json({ name: 'Photo.jpg', storage_path: 'project/photo.jpg' }));

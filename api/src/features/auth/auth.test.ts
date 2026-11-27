@@ -5,7 +5,7 @@ import type { User } from '@supabase/supabase-js';
 import type { AppEnv, Bindings } from '../../type/binding';
 import { authMiddleware, requireAdmin } from '../../core/middleware/auth.middleware';
 import { authRouter } from './auth.routes';
-import { mapAuthUser } from './auth.types';
+import { mapAuthUser, registerSchema } from './auth.types';
 
 const env: Bindings = {
   SUPABASE_URL: 'https://auth.example.test',
@@ -186,6 +186,18 @@ describe('auth boundary', () => {
     expect(update.headers.apikey).toBe(env.SUPABASE_PUBLISHABLE_KEY);
     expect(update.headers.Authorization).toBe('Bearer user-token');
     expect(JSON.parse(update.body)).toEqual({ data: { first_name: 'Updated', avatar_url: null } });
+  });
+
+  it('clears an optional last name without falling back to provider metadata', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse(user));
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ ...user, user_metadata: { last_name: '', family_name: 'Old name' } }),
+    );
+    const response = await request('/auth/me', { lastName: '   ' }, {}, 'user-token', 'PATCH');
+    expect(response.status).toBe(200);
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ data: { last_name: '' } });
+    expect(await response.json()).toMatchObject({ user: { lastName: '' } });
+    expect(registerSchema.safeParse({ ...signup, lastName: '   ' }).success).toBe(false);
   });
 
   it('rejects profile privilege changes', async () => {

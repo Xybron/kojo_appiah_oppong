@@ -28,7 +28,7 @@ The copied `.dev.vars` was moved to `.local-backups/sanflavva.dev.vars` so these
 
 The Worker runs at `http://127.0.0.1:8787`. Check `GET /status` or `GET /api/v1/health` without credentials. Auth endpoints return a configuration error until the two Supabase values are provided. Health reports the Worker is running; it does not test connectivity to Supabase.
 
-In `../website`, copy `.env.example` to `.env`. The API origin is already set to `NUXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8787`. The homepage uses the public portfolio and enquiry routes. `/sign-in`, `/studio`, and `/portal` share this API; the website routes users according to the verified account role.
+In `../website`, copy `.env.example` to `.env`. The API origin is already set to `NUXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8787`. The homepage uses the public portfolio and enquiry routes. `/login`, `/studio`, and `/portal` share this API; the website routes users according to the verified account role.
 
 ## Supabase setup
 
@@ -120,7 +120,7 @@ All paths below start with `/api/v1`. Private routes require `Authorization: Bea
 | PATCH | `/workspace/works/:id` | Admin; partial portfolio fields, returns `{ work }`. |
 | POST | `/workspace/portfolio-image` | Admin; multipart `file`, returns `{ image_url }`. |
 | POST | `/workspace/files` | Admin; multipart `file` and `project_id`, returns `{ file }`. |
-| GET | `/workspace/files/:id/download` | Assigned client or admin; returns `{ url }`, valid for 60 seconds. |
+| GET | `/workspace/files/:id/download` | Assigned client or admin; returns `{ url }`, valid for 60 seconds. Add `?preview=true` for inline JPEG/PNG/WebP images; other files remain downloads. |
 
 Project stages are `planning`, `in_progress`, `review`, and `completed`. Enquiry statuses are `new`, `in_progress`, and `closed`. Portfolio disciplines are `Fine art`, `Architecture`, `Fashion`, and `Advertising`. Dates use `YYYY-MM-DD` or null. IDs are UUIDs, and body keys use snake_case for studio data (auth retains camelCase).
 

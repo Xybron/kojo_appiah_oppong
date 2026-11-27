@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { formatPrice } from "~/data/artworks";
 import "~/assets/css/artwork-detail.css";
+
+definePageMeta({ key: (route) => route.fullPath });
 
 type OrderStatus = "creating" | "pending" | "paid" | "expired" | "review";
 interface VerifiedOrder {
@@ -24,6 +25,16 @@ const order = ref<VerifiedOrder | null>(null);
 const checking = ref(true);
 const message = ref("");
 const missingSession = ref(false);
+const verifiedAmount = computed(() =>
+  order.value
+    ? new Intl.NumberFormat("en-GH", {
+        style: "currency",
+        currency: "GHS",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(order.value.amountMinor / 100)
+    : "",
+);
 let controller: AbortController | undefined;
 const heading = computed(() => {
   if (checking.value) return "Confirming your order.";
@@ -110,6 +121,18 @@ async function verify() {
     )
       throw new Error("Invalid order response");
     order.value = result;
+    if (result.status === "paid" || result.status === "expired") {
+      // A new order is safe only after a verified terminal state. Preserve any
+      // different in-flight selection that has since replaced this attempt.
+      try {
+        const key = `kojo:checkout-attempt:${result.artworkId}`;
+        const attempt = JSON.parse(sessionStorage.getItem(key) || "null");
+        if (attempt?.reference === result.reference)
+          sessionStorage.removeItem(key);
+      } catch {
+        /* A storage restriction must not hide the verified order. */
+      }
+    }
   } catch {
     message.value =
       "We couldn’t check the payment record just now. Please try again or contact the studio with your reference. A return from checkout alone does not confirm payment.";
@@ -159,7 +182,7 @@ useSeoMeta({
           <dt>
             {{ order.status === "paid" ? "Amount paid" : "Order amount" }}
           </dt>
-          <dd>{{ formatPrice(order.amountMinor / 100, order.currency) }}</dd>
+          <dd>{{ verifiedAmount }}</dd>
         </div>
         <div>
           <dt>Fulfilment</dt>

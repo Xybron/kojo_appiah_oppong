@@ -54,7 +54,7 @@ async function submit() {
 <template>
   <main id="main" class="studio-login" tabindex="-1">
     <section class="login-story" aria-label="Kojo Studio">
-      <NuxtLink to="/" class="login-wordmark" aria-label="Kojo Studio, back to website">KOJO<span>APPIAH OPPONG</span></NuxtLink>
+      <SiteWordmark />
       <div class="login-story-copy">
         <p class="login-kicker">THE STUDIO, CONNECTED</p>
         <h1>A space for<br /><em>what’s next.</em></h1>

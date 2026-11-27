@@ -1,4 +1,18 @@
-# Homepage validation
+# Website validation
+
+## Studio Dashboard and Client Portal — 27 November 2026
+
+- Frontend TypeScript checks and the production static build passed, including `/login`, `/studio`, and `/portal` shells.
+- `npm run test:auth`: 12 regression tests passed against the actual auth composable. They exercise sign-out during initialization, late responses after account switches, token refresh, expired sessions, role/email changes, and temporary outages.
+- The API's full check passed: formatting, typecheck, 101 tests across the current API, and Worker dry-run build.
+- Applied the studio migration to an isolated local PostgreSQL 17 database with Auth/Storage schema stubs. RLS assertions passed for admin writes, verified client ownership, cross-client denial, private-note isolation, unpublished portfolio isolation, and revoked admin access. No remote database was changed.
+- Browser-tested both roles using a disposable fixture API, separate from the application: sign-in, sign-out, direct admin-route rejection for clients, client creation, project stage/next-step changes, enquiry status and private notes, client enquiry submission, image preview, and file upload.
+- Visually checked desktop and 390px/320px layouts. Narrow project screens had no page-level horizontal overflow. Checked mobile navigation, editor focus restoration, and client read-only controls.
+- Confirmed the ordinary local `/login` page honestly shows account access as unavailable without API configuration. No test accounts, bypasses, or client fixtures are shipped in the application.
+
+Live Supabase sign-in, email delivery, and Storage transfers remain unverified until the dedicated project is connected. The browser fixture verifies frontend interactions; the API tests and PostgreSQL assertions independently verify the backend contract and authorization. Temporary browser-test services were stopped after verification.
+
+## Earlier homepage validation
 
 Rechecked for the cinematic redesign on 27 November 2026.
 

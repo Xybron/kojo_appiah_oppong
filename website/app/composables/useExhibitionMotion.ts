@@ -47,8 +47,16 @@ export function useExhibitionMotion(
         syncTouch: false,
         duration: 0.9,
         anchors: true,
-        // The contact sheet owns its native horizontal scrolling.
-        prevent: (node) => node.classList.contains("gallery-track"),
+        // Horizontal gestures belong to the contact sheet. Vertical gestures
+        // continue through the page, even while the pointer is over an image.
+        // A blanket data-lenis-prevent also applies overscroll containment,
+        // which traps the page inside this horizontal-only region.
+        virtualScroll: ({ event, deltaX, deltaY }) =>
+          !(
+            event.target instanceof Element &&
+            event.target.closest(".gallery-window") &&
+            Math.abs(deltaX) > Math.abs(deltaY)
+          ),
       });
       lenis.on("scroll", ScrollTrigger.update);
       const tick = (time: number) => lenis.raf(time * 1000);
@@ -211,7 +219,10 @@ export function useExhibitionMotion(
         syncPlayback();
         refresh();
       };
-      const seek = (event: Event) => lenis.scrollTo(Number((event as CustomEvent<number>).detail), { immediate: true });
+      const seek = (event: Event) =>
+        lenis.scrollTo(Number((event as CustomEvent<number>).detail), {
+          immediate: true,
+        });
       window.addEventListener("exhibition:seek", seek);
       window.addEventListener("exhibition:dialog", onDialog);
       window.addEventListener("exhibition:layout", refresh);

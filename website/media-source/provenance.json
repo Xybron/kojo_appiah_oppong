@@ -41,6 +41,10 @@
     {
       "key": "silence",
       "prompt": "Use case: photorealistic-natural. Original fine-art fashion editorial photograph, portrait 3:4. Fictional adult Black woman with short natural hair photographed from behind with face gently turned just enough to see her cheek profile, wearing a sculptural ivory pleated cloth garment that fans across her shoulders, earthy deep olive studio background, warm sidelight delicately traces skin and folds, strong calm silhouette, eyes unseen, quiet dignity and tactile fabric. Visually sophisticated composition with space above, analog medium-format realism, fine grain, natural proportions. Not a portrait of any real artist. No text, branding, watermark, frame, or collage. Output one finished photograph."
+    },
+    {
+      "key": "gallery-wall",
+      "prompt": "Use case: photorealistic-natural. Create an original ultra-refined architectural photograph of an empty contemporary gallery wall, landscape 16:9 composition, camera perfectly frontal and level. Warm ivory limewashed plaster wall fills upper 82 percent of image, pale grey concrete floor lower 18 percent, a low dark timber bench at far left bottom, very gentle indirect daylight from unseen high window left creates soft raking texture. The central 65 percent of wall completely blank and uncluttered for one artwork to be positioned programmatically. Keep wall plane straight front-on no vanishing lines, wall/floor junction perfectly horizontal. Quiet museum atmosphere, analog natural photographic realism, matte surfaces, dark soft edge shadows, elegant negative space. No artworks, frames, plants, people, signage, text, branding, or watermark."
     }
   ]
 }

@@ -1,6 +1,6 @@
 # Kojo Appiah Oppong — The Living Exhibition
 
-Nuxt portfolio with a cinematic opening, a native swipeable gallery, a tactile artist chapter, a physical exhibition scene, and an enquiry composer. Image provenance and replacement notes live in source documentation only, as requested; there are no public preview notices. Photographs and study metadata are provisional. No client, award, or scheduled-event claims are made.
+Nuxt portfolio with a cinematic opening, a native swipeable gallery, a tactile artist chapter, a physical exhibition scene, and an enquiry composer. Image provenance and replacement notes live in source documentation only, as requested; there are no public preview notices. Artwork and event records are provisional. See [EXPERIENCE.md](./EXPERIENCE.md) for the scroll encounter, artwork collection, saved works, exhibitions, GHS checkout, and the approved-design checkpoint.
 
 ## Run locally
 
@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-The default local URL is http://127.0.0.1:3000. `npm run typecheck` checks the TypeScript and Vue code. `npm run build` creates a prerendered, SEO-readable homepage in `.output/public`; `npm run build:ssr` prepares server deployment when dynamic rendering is needed.
+The default local URL is http://127.0.0.1:3000. `npm run typecheck` checks the TypeScript and Vue code. `npm run test:auth` runs session and account-isolation regression tests. `npm run build` creates the static website and account-page shells in `.output/public`; `npm run build:ssr` prepares server deployment when dynamic rendering is needed.
 
 ## Creative direction
 
@@ -26,7 +26,7 @@ The default local URL is http://127.0.0.1:3000. `npm run typecheck` checks the T
 
 ## Content and assets
 
-`app/data/exhibition.ts` holds typed presentation data, isolated from UI and ready to be replaced with a Hono API response. `media-source/` contains the original demo PNGs; `media-source/provenance.json` contains the exact built-in image-generation prompts. `public/images/` contains optimized WebP and progressive JPEG variants. Regenerate with `python3 scripts/prepare-images.py` after installing Pillow; browsers need no Python or image-processing runtime.
+`app/data/exhibition.ts` holds the local demonstration portfolio. When an API origin is configured, the homepage gallery loads published work from the Studio Dashboard through `usePublicPortfolio`; an empty managed portfolio stays empty. `media-source/` contains the original demo PNGs; `media-source/provenance.json` contains the exact built-in image-generation prompts. `public/images/` contains optimized WebP and progressive JPEG variants. Regenerate with `python3 scripts/prepare-images.py` after installing Pillow; browsers need no Python or image-processing runtime.
 
 Image sources: OpenAI built-in image generation, explicitly requested by the user for this preview. Fonts: Google Fonts / Fontsource, self-hosted with their license notices. The custom text favicon is authored locally. There are no external image or font requests at runtime.
 
@@ -40,16 +40,26 @@ Reduced motion disables Lenis and GSAP rather than merely speeding up animations
 
 ## API and authentication boundary
 
-The homepage runs independently of backend credentials. The separate Hono Cloudflare Worker in `../api` now provides Supabase authentication without a tenant or commerce schema. See `../api/README.md` for setup and the endpoint contract.
+The public website runs independently of backend credentials. The separate Hono Cloudflare Worker in `../api` provides Supabase authentication, portfolio publishing, enquiries, projects, and private file storage. See `../api/README.md` for the migration, account setup, storage policies, and endpoint contract.
 
 For local API development, fill in `../api/.dev.vars.local`, run `npm run dev` in `../api`, then copy this website's `.env.example` to `.env`. `NUXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8787` is the API origin; endpoint paths start with `/api/v1`. Set the deployed Worker origin here when connecting production features. A static build needs these public values set at build time; rebuild after changing them.
 
-The homepage does not yet call the API or display sign-in screens. Future authenticated requests should send `Authorization: Bearer <accessToken>` to the Worker. The API verifies identities against Supabase, and administrator authorization uses server-managed `app_metadata.role`. Public registration stays disabled until visitor accounts have a defined purpose. The API includes a reusable admin guard for future content-management routes.
+One website has three account routes:
 
-The enquiry composer currently copies a message for the visitor to share. It does not submit or store personal data. Set `NUXT_PUBLIC_CONTACT_EMAIL` to enable a mail-app handoff, or add a Hono enquiry endpoint in the backend phase.
+- `/login`: password or email-code sign-in. Existing accounts only while registration is disabled.
+- `/studio`: the Studio Dashboard for accounts with server-managed `app_metadata.role = admin`.
+- `/portal`: the Client Portal for other accounts (the API retains the existing `visitor` role name).
+
+Both areas provide an overview, enquiry tracking, projects, shared files, and profile/password settings. Admins also manage clients, update project stages and next steps, write private enquiry notes, upload files, and create/edit/order/publish portfolio work. Clients cannot edit projects or see other clients' data. A client record links to its separately provisioned Auth account by its verified email; creating the record does not send an invitation or create an Auth account.
+
+`useStudioAuth` stores session tokens in sessionStorage for the browser tab, verifies the account with the API on protected navigation, rotates refresh tokens, and clears cached workspace data when identity or access changes. Tokens are not included in server-rendered page payloads; authenticated pages are client-rendered shells. Route guards provide navigation behavior, while API authorization and database row-level policies enforce access independently. Private download links expire after 60 seconds.
+
+With the API configured, the public enquiry composer submits and stores enquiries without requiring sign-in. Without an API origin, it retains the labelled copy/email handoff and states that nothing has been sent. Account access is unavailable until the API and dedicated Supabase project are configured. No fake accounts or demonstration client records are shipped.
+
+The commissioning workflow is intentionally small: no subscription billing, live chat, booking calendar, or automated email invitations. Artwork purchases use the separate Bachs commerce flow documented in `../api/docs-commerce.md`; activation remains disabled pending configuration and sandbox validation. API workspace lists are bounded at 500 records per collection; pagination is a future scaling step.
 
 ## SEO and hosting
 
 The prerender contains real text, image descriptions, a canonical URL, social metadata, and ProfilePage/Person structured data. `public/sitemap.xml` and `public/robots.txt` must be updated with the final domain. Deploy `.output/public` to static hosting, including Cloudflare Pages. Future dynamic SSR can be configured independently of the separate Hono API.
 
-`.openai/hosting.json` identifies the owner-private Sites preview. It uses the same static output. No Supabase project, schema, production auth, or admin account has been created for this homepage phase.
+`.openai/hosting.json` preserves the existing owner-private Site identity. This dashboard phase was completed locally at the user's request. No Supabase project or live account was provisioned, and no dashboard deployment was performed. The checked-in migration is ready to apply to the dedicated Kojo project when connected.

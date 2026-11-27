@@ -362,8 +362,10 @@ button:disabled {
 .scroll-line {
   display: grid;
   place-items: center;
-  width: 32px;
+  width: 48px;
   height: 48px;
+  aspect-ratio: 1;
+  flex-shrink: 0;
   border: 1px solid #eee8d56b;
   border-radius: 50%;
   font-size: 1rem;
@@ -493,6 +495,8 @@ button:disabled {
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  touch-action: pan-x pan-y pinch-zoom;
   padding-block: 1rem 1.5rem;
 }
 .gallery-window::-webkit-scrollbar {
@@ -1270,7 +1274,7 @@ button:disabled {
   }
   .scroll-line {
     height: 42px;
-    width: 28px;
+    width: 42px;
   }
   .interlude {
     grid-template-columns: 1fr;

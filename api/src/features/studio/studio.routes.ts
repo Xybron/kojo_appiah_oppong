@@ -82,16 +82,19 @@ studioRouter.get('/', async (c) =>
 // Exact empty-path route is handled as well when mounted without trailing slash.
 studioRouter.get('/files/:id/download', async (c) => {
   const db = dataClient(c.env, c.get('accessToken'));
-  const file = requiredRecord<{ storage_path: string; name: string }>(
+  const file = requiredRecord<{ storage_path: string; name: string; mime_type: string }>(
     await db
       .from('studio_files')
-      .select('storage_path,name')
+      .select('storage_path,name,mime_type')
       .eq('id', id(c.req.param('id')))
       .maybeSingle(),
   );
+  const preview = c.req.query('preview') === 'true';
+  if (preview && !['image/jpeg', 'image/png', 'image/webp'].includes(file.mime_type))
+    throw new HTTPException(400, { message: 'Only JPG, PNG, and WebP images can be previewed.' });
   const result = await db.storage
     .from(PRIVATE_BUCKET)
-    .createSignedUrl(file.storage_path, 60, { download: file.name });
+    .createSignedUrl(file.storage_path, 60, preview ? undefined : { download: file.name });
   if (result.error || !result.data?.signedUrl)
     throw new HTTPException(503, { message: 'Unable to prepare this download. Please try again.' });
   return c.json({ url: result.data.signedUrl });

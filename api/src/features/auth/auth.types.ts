@@ -50,7 +50,7 @@ export const verifyOtpSchema = z
 export const updateUserSchema = z
   .object({
     firstName: name.optional(),
-    lastName: name.optional(),
+    lastName: z.string().trim().max(100).optional(),
     email: email.optional(),
     avatarUrl: z
       .string()
@@ -109,7 +109,8 @@ export function mapAuthUser(user: User): AuthUser {
     email: user.email ?? null,
     phone: user.phone ?? null,
     firstName: text(metadata.first_name) || text(metadata.given_name),
-    lastName: text(metadata.last_name) || text(metadata.family_name),
+    lastName:
+      typeof metadata.last_name === 'string' ? metadata.last_name : text(metadata.family_name),
     avatarUrl: text(metadata.avatar_url) || text(metadata.picture) || null,
     // user_metadata is editable by the account owner and never grants access.
     role: user.app_metadata?.role === 'admin' ? 'admin' : 'visitor',

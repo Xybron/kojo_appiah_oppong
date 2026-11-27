@@ -1,8 +1,16 @@
+import { artworks } from "./app/data/artworks";
+import { events } from "./app/data/events";
+
 export default defineNuxtConfig({
   compatibilityDate: "2026-11-27",
   devtools: { enabled: false },
   ssr: true,
-  css: ["~/assets/css/main.css", "~/assets/css/collection.css", "~/assets/css/experience.css", "lenis/dist/lenis.css"],
+  css: [
+    "~/assets/css/main.css",
+    "~/assets/css/collection.css",
+    "~/assets/css/experience.css",
+    "lenis/dist/lenis.css",
+  ],
   app: {
     head: {
       htmlAttrs: { lang: "en" },
@@ -46,6 +54,22 @@ export default defineNuxtConfig({
     "/studio": { ssr: false },
     "/portal": { ssr: false },
   },
-  nitro: { prerender: { routes: ["/", "/login", "/studio", "/portal"], crawlLinks: true } },
+  nitro: {
+    prerender: {
+      routes: [
+        "/",
+        "/artworks",
+        "/exhibitions",
+        "/saved",
+        "/checkout/return",
+        "/login",
+        "/studio",
+        "/portal",
+        ...artworks.map((work) => `/artworks/${work.id}`),
+        ...events.map((event) => `/exhibitions/${event.id}`),
+      ],
+      crawlLinks: true,
+    },
+  },
   typescript: { strict: true },
 });

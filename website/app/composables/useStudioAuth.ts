@@ -95,7 +95,11 @@ export function useStudioAuth() {
         if (epoch.value === started) accept(result);
       } catch (error) {
         const status = (error as { status?: number }).status;
-        if (epoch.value === started && (status === 400 || status === 401 || status === 403)) clear();
+        // A rejected refresh ends this session. Ordinary validation/permission
+        // errors from other endpoints must not sign the user out.
+        if (status === 400 || status === 403) {
+          throw Object.assign(new Error("Your session has ended. Please sign in again."), { status: 401 });
+        }
         throw error;
       } finally { if (pending.refreshEpoch === started) pending.refresh = undefined; }
     })();

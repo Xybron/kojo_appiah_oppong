@@ -1,2 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/</loc></url></urlset>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/artworks</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/exhibitions</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/artworks/earth-held-still</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/artworks/terra-in-balance</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/artworks/between-light-and-form</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/artworks/where-the-tide-rests</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/artworks/study-in-red</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/artworks/a-door-to-blue</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/artworks/objects-of-attention</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/artworks/the-shape-of-silence</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/exhibitions/ways-of-seeing</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/exhibitions/the-shape-of-quiet</loc></url>
+  <url><loc>https://kojo-living-exhibition.primeblock16.chatgpt.site/exhibitions/earth-and-afterlight</loc></url>
+</urlset>

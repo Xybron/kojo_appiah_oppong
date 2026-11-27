@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { Study } from "~/data/exhibition";
-const props = defineProps<{ studies: Study[]; loading?: boolean; error?: string }>();
+const props = defineProps<{
+  studies: Study[];
+  loading?: boolean;
+  error?: string;
+}>();
 
 const emit = defineEmits<{ open: [id: string]; retry: [] }>();
 const gallery = ref<HTMLElement | null>(null);
@@ -97,19 +101,26 @@ function onKeydown(event: KeyboardEvent) {
   select(nextIndex);
 }
 
-watch(() => props.studies, async () => {
-  activeIndex.value = 0;
-  await nextTick();
-  select(0, false);
-  window.dispatchEvent(new CustomEvent("exhibition:layout"));
-});
+watch(
+  () => props.studies,
+  async () => {
+    activeIndex.value = 0;
+    await nextTick();
+    select(0, false);
+    window.dispatchEvent(new CustomEvent("exhibition:layout"));
+  },
+);
 
 onMounted(() => {
   resizeObserver = new ResizeObserver(() => select(activeIndex.value, false));
-  watch(gallery, (element, previous) => {
-    if (previous) resizeObserver?.unobserve(previous);
-    if (element) resizeObserver?.observe(element);
-  }, { immediate: true });
+  watch(
+    gallery,
+    (element, previous) => {
+      if (previous) resizeObserver?.unobserve(previous);
+      if (element) resizeObserver?.observe(element);
+    },
+    { immediate: true },
+  );
 });
 
 onBeforeUnmount(() => {
@@ -134,11 +145,38 @@ onBeforeUnmount(() => {
       </p>
     </div>
 
-    <div v-if="!studies.length" class="portfolio-empty page-gutter" role="status">
-      <p>{{ loading ? "Opening the portfolio…" : error || "New work will appear here soon." }}</p>
-      <button v-if="error && !loading" type="button" class="text-button" @click="emit('retry')">Try again</button>
+    <div
+      v-if="!studies.length"
+      class="portfolio-empty page-gutter"
+      role="status"
+    >
+      <p>
+        {{
+          loading
+            ? "Opening the portfolio…"
+            : error || "New work will appear here soon."
+        }}
+      </p>
+      <button
+        v-if="error && !loading"
+        type="button"
+        class="text-button"
+        @click="emit('retry')"
+      >
+        Try again
+      </button>
     </div>
-    <p v-else-if="error" class="portfolio-notice page-gutter" role="status">{{ error }} <button type="button" class="text-button" :disabled="loading" @click="emit('retry')">Try again</button></p>
+    <p v-else-if="error" class="portfolio-notice page-gutter" role="status">
+      {{ error }}
+      <button
+        type="button"
+        class="text-button"
+        :disabled="loading"
+        @click="emit('retry')"
+      >
+        Try again
+      </button>
+    </p>
     <div v-if="studies.length" class="gallery-toolbar page-gutter">
       <div
         class="discipline-tabs"
@@ -157,12 +195,12 @@ onBeforeUnmount(() => {
         </button>
       </div>
       <p id="gallery-instruction" class="gallery-instruction">
-        <span class="desktop-only">Scroll to explore</span>
-        <span class="mobile-only">Swipe to explore</span>
+        <span class="desktop-only">Explore sideways</span>
+        <span class="mobile-only">Swipe sideways</span>
         <span aria-hidden="true">↔</span>
         <span class="sr-only"
-          >Use the left and right arrow keys, or the previous and next
-          controls.</span
+          >Use the left and right arrow keys, or the previous and next controls.
+          Scroll vertically to continue down the exhibition.</span
         >
       </p>
     </div>
@@ -176,7 +214,6 @@ onBeforeUnmount(() => {
       aria-label="Selected photographs"
       aria-describedby="gallery-instruction"
       tabindex="0"
-      data-lenis-prevent
       @scroll.passive="onScroll"
       @keydown="onKeydown"
     >

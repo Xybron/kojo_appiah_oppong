@@ -14,13 +14,23 @@ const email = ref("");
 const message = ref("");
 const status = ref("");
 const busy = ref(false);
+const failed = ref(false);
+const sent = ref(false);
+const website = ref("");
+const apiBase = computed(() =>
+  String(config.public.apiBaseUrl || "").replace(/\/+$/, ""),
+);
 const prepared = ref("");
+const checkoutReference = ref("");
 const output = ref<HTMLTextAreaElement | null>(null);
-let attempt: { fingerprint: string; key: string } | undefined;
+let attempt:
+  | { fingerprint: string; key: string; reference?: string }
+  | undefined;
 
 async function getAttemptKey() {
+  checkoutReference.value = "";
   const selection = JSON.stringify({
-    artartworkId: props.artwork.id,
+    artworkId: props.artwork.id,
     variantId: props.variant.id,
     frameId: props.frame.id,
     name: name.value.trim(),
@@ -33,7 +43,6 @@ async function getAttemptKey() {
   const fingerprint = [...new Uint8Array(digest)]
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
-  if (attempt?.fingerprint === fingerprint) return attempt.key;
   const storageKey = `kojo:checkout-attempt:${props.artwork.id}`;
   try {
     const previous = JSON.parse(sessionStorage.getItem(storageKey) || "null");
@@ -42,11 +51,28 @@ async function getAttemptKey() {
       typeof previous.key === "string" &&
       /^[0-9a-f-]{36}$/i.test(previous.key)
     ) {
-      attempt = { fingerprint, key: previous.key };
+      attempt = {
+        fingerprint,
+        key: previous.key,
+        reference:
+          typeof previous.reference === "string"
+            ? previous.reference
+            : undefined,
+      };
+      checkoutReference.value = attempt.reference || "";
       return previous.key as string;
     }
+    // A callback may have removed a verified terminal attempt while this page
+    // lived in the browser's back/forward cache. Do not revive that old key.
+    // An attempt without a response reference is still an uncertain retry.
+    if (attempt?.fingerprint === fingerprint && !attempt.reference)
+      return attempt.key;
   } catch {
-    /* A new attempt can still be created when optional storage fails. */
+    // Storage failure is not evidence that the previous request finished.
+    if (attempt?.fingerprint === fingerprint) {
+      checkoutReference.value = attempt.reference || "";
+      return attempt.key;
+    }
   }
   attempt = { fingerprint, key: crypto.randomUUID() };
   try {
@@ -70,6 +96,8 @@ function open() {
   previousFocus = document.activeElement as HTMLElement;
   status.value = "";
   prepared.value = "";
+  failed.value = false;
+  sent.value = false;
   dialog.value?.showModal();
   document.documentElement.classList.add("dialog-open");
   window.dispatchEvent(new CustomEvent("exhibition:dialog", { detail: true }));
@@ -83,8 +111,14 @@ function afterClose() {
   previousFocus?.focus({ preventScroll: true });
 }
 async function submit() {
-  if (busy.value) return;
+  if (busy.value || sent.value) return;
   status.value = "";
+  failed.value = false;
+  if (name.value.trim().length < (purchaseAvailable.value ? 2 : 1)) {
+    failed.value = true;
+    status.value = "Please add your full name before continuing.";
+    return;
+  }
   if (purchaseAvailable.value) {
     busy.value = true;
     try {
@@ -128,7 +162,16 @@ async function submit() {
           `kojo:checkout:${response.reference}`,
           response.orderToken,
         );
+        checkoutReference.value = response.reference;
+        if (attempt?.key === idempotencyKey) {
+          attempt = { ...attempt, reference: response.reference };
+          sessionStorage.setItem(
+            `kojo:checkout-attempt:${props.artwork.id}`,
+            JSON.stringify(attempt),
+          );
+        }
       } catch {
+        failed.value = true;
         status.value =
           "This browser couldn’t keep your checkout session. Allow site storage or use another browser before continuing.";
         busy.value = false;
@@ -136,6 +179,7 @@ async function submit() {
       }
       window.location.assign(destination.toString());
     } catch {
+      failed.value = true;
       status.value =
         "We couldn’t open checkout. Your selection is still here; please try again.";
       busy.value = false;
@@ -143,6 +187,35 @@ async function submit() {
     return;
   }
   prepared.value = `Hello Kojo,\n\nI would like to ${props.artwork.purchaseMode === "enquiry" ? "enquire about" : "order"} “${props.artwork.title}”.\n\n${props.artwork.kind} · ${props.artwork.medium}\nArtwork: ${props.variant.widthCm} × ${props.variant.heightCm} cm\nFraming: ${props.frame.label}\n${props.artwork.purchaseMode === "purchase" ? `Artwork and frame: ${formatPrice(subtotal.value, props.artwork.currency)}\n` : ""}\n${message.value.trim()}\n\nPlease confirm availability and delivery arrangements.\n\n${name.value.trim()}\n${email.value.trim()}`;
+  if (apiBase.value) {
+    busy.value = true;
+    try {
+      await $fetch(`${apiBase.value}/api/v1/enquiries`, {
+        method: "POST",
+        timeout: 15000,
+        retry: 0,
+        body: {
+          name: name.value.trim(),
+          email: email.value.trim(),
+          interest: "Fine art and exhibitions",
+          message: prepared.value,
+          website: website.value,
+        },
+      });
+      status.value =
+        "Thank you. Your artwork enquiry has been received by the studio. Nothing has been purchased or reserved.";
+      sent.value = true;
+      message.value = "";
+      prepared.value = "";
+    } catch {
+      failed.value = true;
+      status.value =
+        "We couldn’t send your artwork enquiry. Your selection and message are still here; please try again.";
+    } finally {
+      busy.value = false;
+    }
+    return;
+  }
   if (config.public.contactEmail) {
     window.location.href = `mailto:${encodeURIComponent(String(config.public.contactEmail))}?subject=${encodeURIComponent(`Artwork enquiry: ${props.artwork.title}`)}&body=${encodeURIComponent(prepared.value)}`;
     status.value =
@@ -160,7 +233,12 @@ async function submit() {
     output.value?.select();
   }
 }
+function restoreFromCache(event: PageTransitionEvent) {
+  if (event.persisted) busy.value = false;
+}
+onMounted(() => window.addEventListener("pageshow", restoreFromCache));
 onBeforeUnmount(() => {
+  window.removeEventListener("pageshow", restoreFromCache);
   if (dialog.value?.open) {
     document.documentElement.classList.remove("dialog-open");
     window.dispatchEvent(
@@ -207,7 +285,9 @@ defineExpose({ open });
         {{
           purchaseAvailable
             ? "Review your artwork before continuing to secure payment."
-            : "Prepare your selection to share with Kojo. Availability and delivery can be confirmed together."
+            : apiBase
+              ? "Send your selection to the studio. Availability and delivery can be confirmed together."
+              : "Prepare your selection to share with Kojo. Availability and delivery can be confirmed together."
         }}
       </p>
       <div class="art-order-summary">
@@ -235,7 +315,16 @@ defineExpose({ open });
         This order is for studio collection. For delivery, please enquire before
         purchasing.
       </p>
-      <form @submit.prevent="submit">
+      <form :aria-busy="busy" @submit.prevent="submit">
+        <div class="enquiry-trap" aria-hidden="true">
+          <label
+            >Website<input
+              v-model="website"
+              name="website"
+              tabindex="-1"
+              autocomplete="off"
+          /></label>
+        </div>
         <div class="art-order-fields">
           <label
             >Your name<input
@@ -243,8 +332,9 @@ defineExpose({ open });
               name="name"
               autocomplete="name"
               required
+              :minlength="purchaseAvailable ? 2 : 1"
               maxlength="120"
-              :disabled="busy" /></label
+              :disabled="busy || sent" /></label
           ><label
             >Email address<input
               v-model="email"
@@ -253,7 +343,7 @@ defineExpose({ open });
               autocomplete="email"
               required
               maxlength="200"
-              :disabled="busy"
+              :disabled="busy || sent"
           /></label>
         </div>
         <label v-if="!purchaseAvailable"
@@ -264,20 +354,43 @@ defineExpose({ open });
             name="message"
             rows="3"
             maxlength="2000"
+            :disabled="busy || sent"
           />
         </label>
-        <button class="art-primary-button" type="submit" :disabled="busy">
+        <button
+          class="art-primary-button"
+          type="submit"
+          :disabled="busy || sent"
+        >
           {{
             busy
-              ? "Opening checkout…"
-              : purchaseAvailable
-                ? "Continue to payment"
-                : config.public.contactEmail
-                  ? "Continue in email"
-                  : "Copy artwork enquiry"
+              ? purchaseAvailable
+                ? "Opening checkout…"
+                : "Sending enquiry…"
+              : sent
+                ? "Enquiry sent"
+                : purchaseAvailable
+                  ? "Continue to payment"
+                  : apiBase
+                    ? "Send artwork enquiry"
+                    : config.public.contactEmail
+                      ? "Continue in email"
+                      : "Copy artwork enquiry"
           }}
         </button>
-        <p class="art-order-status" role="status">{{ status }}</p>
+        <p class="art-order-status" :role="failed ? 'alert' : 'status'">
+          {{ status }}
+        </p>
+        <NuxtLink
+          v-if="failed && purchaseAvailable && checkoutReference"
+          :to="{
+            path: '/checkout/return',
+            query: { reference: checkoutReference },
+          }"
+          class="underlined-link"
+          @click="dialog?.close()"
+          >Check existing order status</NuxtLink
+        >
         <label v-if="prepared && status.includes('below')"
           >Your enquiry<textarea
             ref="output"

@@ -1,8 +1,29 @@
 <script setup lang="ts">
-const { studies, loading: portfolioLoading, error: portfolioError, load: reloadPortfolio } = usePublicPortfolio();
+import { getArtwork } from "~/data/artworks";
+const {
+  studies,
+  loading: portfolioLoading,
+  error: portfolioError,
+  load: reloadPortfolio,
+} = usePublicPortfolio();
 const heroStudy = computed(() => studies.value[0]);
 
 const config = useRuntimeConfig();
+// The opening portrait has its own moment; Selected Work introduces new images.
+// Keep the managed portfolio authoritative when its API is configured.
+const selectedStudies = computed(() => {
+  const remaining = studies.value.filter(
+    (work) => work.id !== heroStudy.value?.id,
+  );
+  if (config.public.apiBaseUrl) return remaining;
+  const opening = getArtwork("the-shape-of-silence");
+  return opening ? [opening, ...remaining] : remaining;
+});
+const viewerStudies = computed(() =>
+  heroStudy.value
+    ? [heroStudy.value, ...selectedStudies.value]
+    : selectedStudies.value,
+);
 const root = ref<HTMLElement | null>(null);
 const viewer = ref<{ open: (id: string) => void } | null>(null);
 const enquiry = ref<{ open: () => void } | null>(null);
@@ -43,7 +64,6 @@ useHead({
   ],
 });
 useExhibitionMotion(root, paused);
-
 </script>
 
 <template>
@@ -111,7 +131,20 @@ useExhibitionMotion(root, paused);
         <p class="interlude-index">FOUR DISCIPLINES<br />ONE WAY OF SEEING</p>
       </div>
 
-      <ExhibitionGallery :studies="studies" :loading="portfolioLoading" :error="portfolioError" @open="viewer?.open($event)" @retry="reloadPortfolio" />
+      <ExhibitionGallery
+        :studies="selectedStudies"
+        :loading="portfolioLoading"
+        :error="portfolioError"
+        @open="viewer?.open($event)"
+        @retry="reloadPortfolio"
+      />
+
+      <div class="collection-bridge page-gutter">
+        <p>Find a work to live with.</p>
+        <NuxtLink to="/artworks" class="underlined-link"
+          >Explore the collection <span aria-hidden="true">↗</span></NuxtLink
+        >
+      </div>
 
       <ArtworkJourney />
 
@@ -201,7 +234,9 @@ useExhibitionMotion(root, paused);
               For exhibitions, private viewings, and conversations around the
               work.
             </p>
-            <NuxtLink class="underlined-link" to="/exhibitions">Explore exhibitions <span aria-hidden="true">↗</span></NuxtLink>
+            <NuxtLink class="underlined-link" to="/exhibitions"
+              >Explore exhibitions <span aria-hidden="true">↗</span></NuxtLink
+            >
           </div>
         </div>
       </section>
@@ -226,7 +261,7 @@ useExhibitionMotion(root, paused);
       </section>
     </main>
 
-    <StudyViewer ref="viewer" :studies="studies" />
+    <StudyViewer ref="viewer" :studies="viewerStudies" />
     <EnquiryDialog ref="enquiry" />
   </div>
 </template>

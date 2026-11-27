@@ -1,16 +1,40 @@
 import { z } from 'zod';
 
-export const checkoutInputSchema = z.object({
-  artworkId: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/),
-  variantId: z.string().min(1).max(40).regex(/^[a-z0-9-]+$/),
-  frameId: z.string().min(1).max(40).regex(/^[a-z0-9-]+$/),
-  customer: z.object({
-    name: z.string().trim().min(2).max(120),
-    email: z.email().max(200).transform((value) => value.toLowerCase()),
-    phone: z.string().trim().max(30).regex(/^[+\d ()-]*$/).optional(),
-  }).strict(),
-  idempotencyKey: z.uuid(),
-}).strict();
+export const checkoutInputSchema = z
+  .object({
+    artworkId: z
+      .string()
+      .min(1)
+      .max(100)
+      .regex(/^[a-z0-9-]+$/),
+    variantId: z
+      .string()
+      .min(1)
+      .max(40)
+      .regex(/^[a-z0-9-]+$/),
+    frameId: z
+      .string()
+      .min(1)
+      .max(40)
+      .regex(/^[a-z0-9-]+$/),
+    customer: z
+      .object({
+        name: z.string().trim().min(2).max(120),
+        email: z
+          .email()
+          .max(200)
+          .transform((value) => value.toLowerCase()),
+        phone: z
+          .string()
+          .trim()
+          .max(30)
+          .regex(/^[+\d ()-]*$/)
+          .optional(),
+      })
+      .strict(),
+    idempotencyKey: z.uuid(),
+  })
+  .strict();
 export type CheckoutInput = z.infer<typeof checkoutInputSchema>;
 export type OrderStatus = 'creating' | 'pending' | 'paid' | 'expired' | 'review';
 export interface CommerceOrder {
@@ -50,7 +74,13 @@ export interface BachsSession {
   currency?: string;
   reference?: string;
   expires_at?: string;
-  charge?: { id?: string; status?: string; amount?: string; amount_paid?: string; currency?: string } | null;
+  charge?: {
+    id?: string;
+    status?: string;
+    amount?: string;
+    amount_paid?: string;
+    currency?: string;
+  } | null;
 }
 export interface BachsEvent {
   id: string;

@@ -11,3 +11,18 @@ ALLOWED_ORIGINS="http://127.0.0.1:3000,http://localhost:3000"
 # Keep false for an admin-only foundation. Create the first admin in Supabase.
 # Set true only when public visitor registration is needed.
 AUTH_ALLOW_REGISTRATION="false"
+
+# Commerce is opt-in and must use Kojo's own verified catalog and Bachs account.
+COMMERCE_ENABLED="false"
+CATALOG_VERIFIED="false"
+BACHS_ENVIRONMENT="sandbox"
+BACHS_SECRET_KEY=""
+BACHS_WEBHOOK_SECRET=""
+BACHS_ACCOUNT_ID=""
+# A public HTTPS WEBSITE origin; Bachs refuses localhost callback URLs.
+COMMERCE_APP_URL=""
+# Generate a separate random secret of at least 32 characters; never expose it.
+COMMERCE_ORDER_TOKEN_SECRET=""
+# Server-only Supabase secret/service_role key, used solely by commerce routes.
+# This is distinct from the public auth key above. Never put it in Nuxt config.
+SUPABASE_COMMERCE_SECRET_KEY=""

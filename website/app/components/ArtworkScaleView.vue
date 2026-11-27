@@ -24,6 +24,9 @@ const frameStyle = computed(() => ({
   aspectRatio: `${outerWidth.value} / ${outerHeight.value}`,
 }));
 const printStyle = computed(() => ({
+  // CSS percentage padding on every side is relative to the containing block's
+  // width. The frame fills scale-work, so border / outerWidth gives equal,
+  // physically proportional borders horizontally and vertically.
   padding: `${(props.frame.borderCm / outerWidth.value) * 100}%`,
 }));
 </script>
@@ -33,7 +36,7 @@ const printStyle = computed(() => ({
     <div
       class="scale-wall"
       role="img"
-      :aria-label="`${artwork.title} at scale on a ${sizeLabel(wallWidth)} wide wall. Artwork ${sizeLabel(variant.widthCm)} wide by ${sizeLabel(variant.heightCm)} high. Outer dimensions ${sizeLabel(outerWidth)} by ${sizeLabel(outerHeight)}.`"
+      :aria-label="`${artwork.title} at scale on a ${sizeLabel(wallWidth)} wide wall. ${frame.label}. Artwork ${sizeLabel(variant.widthCm)} wide by ${sizeLabel(variant.heightCm)} high. Outer dimensions ${sizeLabel(outerWidth)} by ${sizeLabel(outerHeight)}.`"
       :style="{ aspectRatio: `${wallWidth} / ${wallHeight}` }"
     >
       <span class="scale-wall-title" aria-hidden="true"
@@ -48,7 +51,11 @@ const printStyle = computed(() => ({
         >
         <div
           class="scale-frame"
-          :class="{ 'is-unframed': frame.borderCm === 0 }"
+          :class="{
+            'is-unframed': frame.borderCm === 0,
+            'is-oak': frame.id === 'oak',
+            'is-black': frame.id === 'black',
+          }"
           :style="printStyle"
         >
           <img

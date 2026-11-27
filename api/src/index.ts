@@ -5,6 +5,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import { HTTPException } from 'hono/http-exception';
 import type { AppEnv } from './type/binding';
 import { authRouter } from './features/auth/auth.routes';
+import { commerceRouter } from './features/commerce/commerce.routes';
 import { publicStudioRouter, studioRouter } from './features/studio/studio.routes';
 
 export const app = new Hono<AppEnv>();
@@ -65,6 +66,7 @@ const health = () => ({
 app.get('/status', (c) => c.json(health()));
 app.get('/api/v1/health', (c) => c.json(health()));
 app.route('/api/v1/auth', authRouter);
+app.route('/api/v1', commerceRouter);
 app.route('/api/v1/workspace', studioRouter);
 app.route('/api/v1', publicStudioRouter);
 
